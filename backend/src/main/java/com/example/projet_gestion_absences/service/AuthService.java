@@ -74,36 +74,22 @@ public class AuthService {
     }
 
     public AuthResponse authenticate(AuthRequest request) {
-        try {
-            // Authenticate using Spring Security
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getLogin(),
-                            request.getPassword()
-                    )
-            );
+    Utilisateur utilisateur = utilisateurRepository.findByLogin(request.getLogin())
+            .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
 
-            // Get user from repository
-            Utilisateur utilisateur = utilisateurRepository.findByLogin(request.getLogin())
-                    .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
-
-            // Generate JWT token with additional claims
-            Map<String, Object> extraClaims = new HashMap<>();
-            extraClaims.put("lastLogin", LocalDateTime.now());
-
-            String jwtToken = jwtService.generateToken(extraClaims, utilisateur);
-
-            log.info("Utilisateur authentifié: {}", utilisateur.getLogin());
-            return buildAuthResponse(utilisateur, jwtToken);
-
-        } catch (BadCredentialsException e) {
-            log.warn("Tentative de connexion échouée pour le login: {}", request.getLogin());
-            throw new InvalidCredentialsException("Identifiants invalides");
-        } catch (AuthenticationException e) {
-            log.error("Erreur d'authentification pour le login: {}", request.getLogin(), e);
-            throw new InvalidCredentialsException("Erreur d'authentification");
-        }
+    if (!passwordEncoder.matches(request.getPassword(), utilisateur.getPassword())) {
+        throw new InvalidCredentialsException("Identifiants invalides");
     }
+
+    Map<String, Object> extraClaims = new HashMap<>();
+    extraClaims.put("lastLogin", LocalDateTime.now());
+
+    String jwtToken = jwtService.generateToken(extraClaims, utilisateur);
+
+    log.info("Utilisateur authentifié (manuellement): {}", utilisateur.getLogin());
+
+    return buildAuthResponse(utilisateur, jwtToken);
+}
 
     private Utilisateur createUserByRole(RegisterRequest request) {
         return switch (request.getRole()) {
