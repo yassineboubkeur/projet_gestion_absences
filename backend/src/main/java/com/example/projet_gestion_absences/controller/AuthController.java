@@ -5,12 +5,14 @@ import com.example.projet_gestion_absences.model.dto.request.RegisterRequest;
 import com.example.projet_gestion_absences.model.dto.response.AuthResponse;
 import com.example.projet_gestion_absences.service.AuthService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+
 @RequestMapping("/api/auth")
 public class AuthController {
 
