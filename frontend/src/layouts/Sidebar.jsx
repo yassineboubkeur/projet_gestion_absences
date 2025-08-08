@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { FaTachometerAlt, FaUserFriends, FaUsers, FaCog, FaServicestack, FaBox } from 'react-icons/fa'
-import '../components/css/Sidebar.css'
+import '../layouts/css/Sidebar.css' // Assuming you have a CSS file for styling
 
 export default function Sidebar() {
   const location = useLocation()
