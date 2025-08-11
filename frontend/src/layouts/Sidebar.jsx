@@ -8,11 +8,15 @@ export default function Sidebar() {
 
   const menuItems = [
     { name: 'Dashboard', path: '/dashboard', icon: <FaTachometerAlt /> },
-    { name: 'Clients', path: '/dashboard/clients', icon: <FaUserFriends /> },
-    { name: 'Team', path: '/dashboard/team', icon: <FaUsers /> },
-    { name: 'Services', path: '/dashboard/services', icon: <FaServicestack /> }, 
-    { name: 'Products', path: '/dashboard/products', icon: <FaBox /> },
-    { name: 'Settings', path: '/dashboard/settings', icon: <FaCog /> },
+    { name: 'Etudiants', path: '/dashboard/etudiants', icon: <FaUserFriends /> },
+    { name: 'Classes', path: '/dashboard/classes', icon: <FaUsers /> },
+    { name: 'Filieres', path: '/dashboard/filieres', icon: <FaUsers /> },
+    { name: 'Cours', path: '/dashboard/cours', icon: <FaServicestack /> }, 
+    { name: 'Emplois-temps', path: '/dashboard/emplois-temps', icon: <FaServicestack /> },
+    { name: 'Salles', path: '/dashboard/salles', icon: <FaServicestack /> }, 
+    { name: 'Seances', path: '/dashboard/seances', icon: <FaServicestack /> },
+    { name: 'Professeurs', path: '/dashboard/professeurs', icon: <FaBox /> },
+    { name: 'Parametres', path: '/dashboard/parametres', icon: <FaCog /> },
   ]
 
   return (

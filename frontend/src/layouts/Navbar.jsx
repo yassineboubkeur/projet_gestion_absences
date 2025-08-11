@@ -1,7 +1,18 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/useAuthStore';
 
 export default function Navbar() {
+  const user = useAuthStore(state => state.user);
+  const token = useAuthStore(state => state.token);
+  const logout = useAuthStore(state => state.logout);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <nav style={navStyle}>
       <div style={logoStyle}>Mon Projet</div>
@@ -11,21 +22,37 @@ export default function Navbar() {
             Accueil
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/login" style={linkStyle}>
-            Connexion
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/register" style={linkStyle}>
-            Inscription
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/dashboard" style={linkStyle}>
-            Tableau de bord
-          </NavLink>
-        </li>
+
+        {!token && (
+          <>
+            <li>
+              <NavLink to="/login" style={linkStyle}>
+                Connexion
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/register" style={linkStyle}>
+                Inscription
+              </NavLink>
+            </li>
+          </>
+        )}
+
+        {token && (
+          <>
+            <li>
+              <NavLink to="/dashboard" style={linkStyle}>
+                Tableau de bord
+              </NavLink>
+            </li>
+            <li>
+              <button onClick={handleLogout} style={logoutBtnStyle}>
+                Déconnexion
+              </button>
+            </li>
+          </>
+        )}
+
         <li>
           <NavLink to="/privacy" style={linkStyle}>
             Politique
@@ -64,3 +91,12 @@ const linkStyle = ({ isActive }) => ({
   fontWeight: isActive ? 'bold' : 'normal',
   transition: 'color 0.3s',
 });
+
+const logoutBtnStyle = {
+  background: 'transparent',
+  border: 'none',
+  color: '#eee',
+  cursor: 'pointer',
+  fontSize: '1rem',
+  transition: 'color 0.3s',
+};

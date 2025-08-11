@@ -25,6 +25,10 @@ public class Utilisateur {
     private Role role;
     private boolean active;
 
+     public boolean isActive() {  // ✅ ajouté
+        return active;
+    }
+
     // Getters & Setters
 
     public Long getId() {
