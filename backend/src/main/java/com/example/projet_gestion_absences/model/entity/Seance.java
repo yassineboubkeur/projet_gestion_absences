@@ -1,5 +1,6 @@
 package com.example.projet_gestion_absences.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -12,18 +13,22 @@ public class Seance {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "cours_id", nullable = false)
     private Cours cours;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "professeur_id", nullable = false)
     private Professeur professeur;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "salle_id", nullable = false)
     private Salle salle;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "emploi_du_temps_id")
     private EmploiDuTemps emploiDuTemps;
 
@@ -35,6 +40,7 @@ public class Seance {
     private StatutSeance statut = StatutSeance.PLANIFIEE;
 
     @OneToMany(mappedBy = "seance", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Absence> absences;
 
     // Constructors

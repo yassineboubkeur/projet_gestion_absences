@@ -19,10 +19,12 @@ public class Cours {
     private int volumeHoraire;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "matiere_id")
     private Matiere matiere;
 
     @OneToMany(mappedBy = "cours")
+    @JsonIgnore
     private List<Seance> seances;
 
     // Constructors
