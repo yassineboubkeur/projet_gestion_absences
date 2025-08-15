@@ -1,0 +1,140 @@
+Authentication
+POST /api/auth/login - Authenticate user
+
+POST /api/auth/register - Register new user
+
+Etudiant (Student) Endpoints
+GET /api/etudiants - Get all students
+
+GET /api/etudiants/{id} - Get student by ID
+
+POST /api/etudiants - Create a student
+
+POST /api/etudiants/register - Register a student
+
+PUT /api/etudiants/{id} - Update a student
+
+DELETE /api/etudiants/{id} - Delete a student
+
+GET /api/etudiants/by-classe/{classeId} - Get students by class
+
+PATCH /api/etudiants/{etudiantId}/change-classe/{newClasseId} - Change student's class
+
+Professeur (Professor) Endpoints
+GET /api/professeurs - Get all professors
+
+GET /api/professeurs/{id} - Get professor by ID
+
+GET /api/professeurs/matricule/{matricule} - Get professor by matricule
+
+POST /api/professeurs - Create a professor
+
+PUT /api/professeurs/{id} - Update a professor
+
+DELETE /api/professeurs/{id} - Delete a professor
+
+PATCH /api/professeurs/{id}/toggle-status - Toggle professor status
+
+GET /api/professeurs/search - Search professors
+
+GET /api/professeurs/specialites - Get all specialties
+
+GET /api/professeurs/specialites/{specialite} - Get professors by specialty
+
+GET /api/professeurs/specialitesbyprof - Get professors grouped by specialty
+
+Classe (Class) Endpoints
+GET /api/classes - Get all classes
+
+GET /api/classes/{id} - Get class by ID
+
+GET /api/classes/niveau/{niveau} - Get classes by level
+
+POST /api/classes - Create a class
+
+PUT /api/classes/{id} - Update a class
+
+DELETE /api/classes/{id} - Delete a class
+
+GET /api/classes/{id}/etudiants - Get students by class
+
+Matiere (Subject) Endpoints
+GET /api/matieres - Get all subjects
+
+GET /api/matieres/{id} - Get subject by ID
+
+GET /api/matieres/code/{code} - Get subject by code
+
+GET /api/matieres/domaine/{domaine} - Get subjects by domain
+
+POST /api/matieres - Create a subject
+
+PUT /api/matieres/{id} - Update a subject
+
+DELETE /api/matieres/{id} - Delete a subject
+
+GET /api/matieres/search - Search subjects by title
+
+Cours (Course) Endpoints
+GET /api/cours - Get all courses
+
+GET /api/cours/{id} - Get course by ID
+
+GET /api/cours/code/{code} - Get course by code
+
+GET /api/cours/matiere/{matiereId} - Get courses by subject
+
+POST /api/cours - Create a course
+
+PUT /api/cours/{id} - Update a course
+
+DELETE /api/cours/{id} - Delete a course
+
+GET /api/cours/search - Search courses by title
+
+Salle (Room) Endpoints
+GET /api/salles - Get all rooms
+
+GET /api/salles/{id} - Get room by ID
+
+GET /api/salles/code/{code} - Get room by code
+
+POST /api/salles - Create a room
+
+PUT /api/salles/{id} - Update a room
+
+DELETE /api/salles/{id} - Delete a room
+
+Seance (Session) Endpoints
+GET /api/seances - Get all sessions
+
+GET /api/seances/{id} - Get session by ID
+
+GET /api/seances/professeur/{professeurId} - Get sessions by professor
+
+GET /api/seances/salle/{salleId} - Get sessions by room
+
+GET /api/seances/cours/{coursId} - Get sessions by course
+
+GET /api/seances/date/{date} - Get sessions by date
+
+POST /api/seances - Create a session
+
+POST /api/seances/check-conflict - Check for schedule conflict
+
+PUT /api/seances/{id} - Update a session
+
+DELETE /api/seances/{id} - Delete a session
+
+Other Endpoints
+GET /routes - List all routes
+
+GET /actuator - Actuator root
+
+GET /actuator/mappings - Actuator mappings
+
+GET /error - Error handling
+
+/webjars/** - WebJars resources
+
+/** - Static resources

@@ -1,5 +1,6 @@
 package com.example.projet_gestion_absences.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class Matiere {
     private String domaine;
 
     @OneToMany(mappedBy = "matiere")
+    @JsonIgnore
     private List<Cours> cours;
 
     // Constructors, Getters and Setters

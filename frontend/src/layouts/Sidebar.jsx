@@ -11,11 +11,13 @@ export default function Sidebar() {
     { name: 'Etudiants', path: '/dashboard/etudiants', icon: <FaUserFriends /> },
     { name: 'Classes', path: '/dashboard/classes', icon: <FaUsers /> },
     { name: 'Filieres', path: '/dashboard/filieres', icon: <FaUsers /> },
-    { name: 'Cours', path: '/dashboard/cours', icon: <FaServicestack /> }, 
+    { name: 'Cours', path: '/dashboard/cours', icon: <FaServicestack /> },
     { name: 'Emplois-temps', path: '/dashboard/emplois-temps', icon: <FaServicestack /> },
-    { name: 'Salles', path: '/dashboard/salles', icon: <FaServicestack /> }, 
+    { name: 'Salles', path: '/dashboard/salles', icon: <FaServicestack /> },
     { name: 'Seances', path: '/dashboard/seances', icon: <FaServicestack /> },
     { name: 'Professeurs', path: '/dashboard/professeurs', icon: <FaBox /> },
+    { name: 'Specialite', path: '/dashboard/specialites', icon: <FaBox /> },
+
     { name: 'Parametres', path: '/dashboard/parametres', icon: <FaCog /> },
   ]
 
@@ -29,9 +31,8 @@ export default function Sidebar() {
           <li key={name} className="nav-item mb-2">
             <Link
               to={path}
-              className={`nav-link d-flex align-items-center gap-2 ${
-                location.pathname === path ? 'active fw-bold text-primary' : 'text-dark'
-              }`}
+              className={`nav-link d-flex align-items-center gap-2 ${location.pathname === path ? 'active fw-bold text-primary' : 'text-dark'
+                }`}
               style={{ borderRadius: '4px' }}
             >
               <span style={{ fontSize: '1.2rem' }}>{icon}</span> {name}

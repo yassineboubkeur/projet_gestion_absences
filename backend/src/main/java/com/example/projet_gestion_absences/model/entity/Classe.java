@@ -1,6 +1,7 @@
 package com.example.projet_gestion_absences.model.entity;
 
 //package com.example.projet_gestion_absences.model.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -14,6 +15,8 @@ public class Classe {
     private String niveau; // e.g., "Terminale", "3ème"
 
     @OneToMany(mappedBy = "classe")
+    @JsonIgnore
+
     private List<Etudiant> etudiants;
 
     // Constructors, getters, and setters

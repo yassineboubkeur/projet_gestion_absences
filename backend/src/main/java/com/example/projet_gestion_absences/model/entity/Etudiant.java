@@ -1,14 +1,18 @@
 package com.example.projet_gestion_absences.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Etudiant extends Utilisateur {
+
+
     private String matricule;
     private String address; // Nouveau champ adresse
 
     @ManyToOne
+    @JsonIgnore
     private Classe classe;
 
     // Constructors

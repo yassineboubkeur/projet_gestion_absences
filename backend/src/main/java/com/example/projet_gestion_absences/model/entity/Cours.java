@@ -1,5 +1,6 @@
 package com.example.projet_gestion_absences.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -7,6 +8,8 @@ import java.util.List;
 public class Cours {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
+
     private Long id;
 
     private String code;
