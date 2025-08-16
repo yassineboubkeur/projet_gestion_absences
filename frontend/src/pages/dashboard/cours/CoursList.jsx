@@ -36,12 +36,7 @@ export default function CoursList() {
   return (
     <div className="container mt-4">
       <h2>Liste des cours</h2>
-      <Button
-        className="mb-3"
-        onClick={() => navigate("/dashboard/cours/new")}
-      >
-        + Ajouter
-      </Button>
+      <Button className="mb-3" onClick={() => navigate("/dashboard/cours/new")}>+ Ajouter</Button>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -56,46 +51,24 @@ export default function CoursList() {
         </thead>
         <tbody>
           {cours.length > 0 ? (
-            cours.map((c) => (
-              <tr key={c.id ?? Math.random()}>
+            cours.map(c => (
+              <tr key={c.id}>
                 <td>{c.code}</td>
                 <td>{c.intitule}</td>
                 <td>{c.description}</td>
                 <td>{c.coefficient}</td>
                 <td>{c.volumeHoraire}</td>
-                <td>{c.matiere?.nom || "N/A"}</td>
+                <td>{c.matiere?.intitule || "N/A"}</td>
                 <td>
-                  <Button
-                    size="sm"
-                    variant="info"
-                    onClick={() => navigate(`/dashboard/cours/${c.id}`)}
-                  >
-                    Détails
-                  </Button>{" "}
-                  <Button
-                    size="sm"
-                    variant="warning"
-                    onClick={() =>
-                      navigate(`/dashboard/cours/${c.id}/edit`)
-                    }
-                  >
-                    Modifier
-                  </Button>{" "}
-                  <Button
-                    size="sm"
-                    variant="danger"
-                    onClick={() => handleDelete(c.id)}
-                  >
-                    Supprimer
-                  </Button>
+                  <Button size="sm" variant="info" onClick={() => navigate(`/dashboard/cours/${c.id}`)}>Détails</Button>{" "}
+                  <Button size="sm" variant="warning" onClick={() => navigate(`/dashboard/cours/${c.id}/edit`)}>Modifier</Button>{" "}
+                  <Button size="sm" variant="danger" onClick={() => handleDelete(c.id)}>Supprimer</Button>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="7" className="text-center">
-                Aucun cours disponible
-              </td>
+              <td colSpan="7" className="text-center">Aucun cours disponible</td>
             </tr>
           )}
         </tbody>

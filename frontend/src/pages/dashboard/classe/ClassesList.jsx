@@ -42,7 +42,6 @@ export default function ClassesList() {
           <tr>
             <th>Nom</th>
             <th>Niveau</th>
-            <th>Effectif</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -51,7 +50,6 @@ export default function ClassesList() {
             <tr key={cls.id}>
               <td>{cls.nom}</td>
               <td>{cls.niveau}</td>
-              <td>{cls.effectif}</td>
               <td>
                 <Button variant="warning" size="sm" onClick={() => navigate(`/dashboard/classes/${cls.id}/edit`)}>Modifier</Button>{" "}
                 <Button variant="info" size="sm" onClick={() => navigate(`/dashboard/classes/${cls.id}`)}>Détails</Button>{" "}

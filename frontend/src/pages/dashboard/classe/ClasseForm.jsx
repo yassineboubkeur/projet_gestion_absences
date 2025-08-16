@@ -7,12 +7,15 @@ export default function ClasseForm() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ nom: "", niveau: "" });
+  const [form, setForm] = useState({ nom: "", niveau: "" }); // بلا effectif
 
   useEffect(() => {
     if (id) {
       getClasseById(id)
-        .then((data) => setForm({ nom: data.nom || "", niveau: data.niveau || "" }))
+        .then((data) => setForm({ 
+          nom: data.nom || "", 
+          niveau: data.niveau || ""  // بلا effectif
+        }))
         .catch(err => {
           console.error(err);
           alert("Erreur lors de la récupération de la classe.");
