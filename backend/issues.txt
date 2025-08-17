@@ -1,0 +1,9 @@
+PUT /api/cours/{id}
+
+make specialite post endpoint
+
+add filiere endpoint
+
+add emploie du temps endpoint
+
+add endpoint pour specialite 

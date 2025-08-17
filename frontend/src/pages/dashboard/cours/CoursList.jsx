@@ -58,7 +58,7 @@ export default function CoursList() {
                 <td>{c.description}</td>
                 <td>{c.coefficient}</td>
                 <td>{c.volumeHoraire}</td>
-                <td>{c.matiere?.intitule || "N/A"}</td>
+                <td>{c.matiereId || "N/A"}</td>
                 <td>
                   <Button size="sm" variant="info" onClick={() => navigate(`/dashboard/cours/${c.id}`)}>Détails</Button>{" "}
                   <Button size="sm" variant="warning" onClick={() => navigate(`/dashboard/cours/${c.id}/edit`)}>Modifier</Button>{" "}
