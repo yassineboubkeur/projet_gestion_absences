@@ -36,6 +36,7 @@ function LoginPage() {
         },
         data.token
       );
+     
 
       toast.success("Connexion réussie !");
       navigate("/dashboard");

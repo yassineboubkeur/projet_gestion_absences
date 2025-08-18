@@ -4,6 +4,7 @@ import com.example.projet_gestion_absences.model.dto.EtudiantDTO;
 import com.example.projet_gestion_absences.model.dto.EtudiantResponseDTO;
 import com.example.projet_gestion_absences.model.entity.Etudiant;
 import com.example.projet_gestion_absences.service.EtudiantService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/etudiants")
+@SecurityRequirement(name = "bearerAuth")
 public class EtudiantController {
 
     @Autowired

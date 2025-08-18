@@ -6,6 +6,7 @@ export const getEtudiants = async () => {
   const res = await fetch(API_URL);
   if (!res.ok) throw new Error("Erreur lors de la récupération des étudiants");
   return res.json();
+  
 };
 
 export const getEtudiantById = async (id) => {
