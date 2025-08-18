@@ -2,10 +2,13 @@ package com.example.projet_gestion_absences.model.entity;
 
 //package com.example.projet_gestion_absences.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "classe")
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class Classe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

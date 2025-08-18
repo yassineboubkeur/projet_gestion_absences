@@ -18,13 +18,33 @@ public class CoursController {
         this.coursService = coursService;
     }
 
-    // Create
+    /* =========================
+       Create
+       ========================= */
+
     @PostMapping
     public Cours createCours(@RequestBody CoursDTO coursDTO) {
         return coursService.createCours(coursDTO);
     }
 
-    // Read
+    /* =========================
+       Helpers d'affectation
+       ========================= */
+
+    @PatchMapping("/{coursId}/set-classe/{classeId}")
+    public ResponseEntity<Cours> setClasse(@PathVariable Long coursId, @PathVariable Long classeId) {
+        return ResponseEntity.ok(coursService.setClasseForCours(coursId, classeId));
+    }
+
+    @PatchMapping("/{coursId}/set-professeur/{professeurId}")
+    public ResponseEntity<Cours> setProf(@PathVariable Long coursId, @PathVariable Long professeurId) {
+        return ResponseEntity.ok(coursService.setProfesseurForCours(coursId, professeurId));
+    }
+
+    /* =========================
+       Read
+       ========================= */
+
     @GetMapping
     public List<Cours> getAllCours() {
         return coursService.getAllCours();
@@ -42,6 +62,11 @@ public class CoursController {
         return coursService.getCoursByMatiere(matiereId);
     }
 
+    @GetMapping("/by-classe/{classeId}")
+    public List<Cours> getByClasse(@PathVariable Long classeId) {
+        return coursService.getCoursByClasse(classeId);
+    }
+
     @GetMapping("/search")
     public List<Cours> searchByIntitule(@RequestParam String intitule) {
         return coursService.searchByIntitule(intitule);
@@ -56,7 +81,10 @@ public class CoursController {
         return ResponseEntity.notFound().build();
     }
 
-    // Update
+    /* =========================
+       Update
+       ========================= */
+
     @PutMapping("/{id}")
     public ResponseEntity<Cours> updateCours(@PathVariable Long id, @RequestBody CoursDTO coursDTO) {
         try {
@@ -67,7 +95,10 @@ public class CoursController {
         }
     }
 
-    // Delete
+    /* =========================
+       Delete
+       ========================= */
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCours(@PathVariable Long id) {
         try {

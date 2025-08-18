@@ -1,5 +1,6 @@
 package com.example.projet_gestion_absences.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -15,8 +16,9 @@ public class Salle {
     private int capacite;
     private String type; // "Amphithéâtre", "Salle TD", "Laboratoire"
 
-    @OneToMany(mappedBy = "salle")
-    private List<Seance> seances;
+    @OneToMany(mappedBy = "salle", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("salle-seances")
+    private List<Seance> seances = new java.util.ArrayList<>();
 
     // Constructors
     public Salle() {}

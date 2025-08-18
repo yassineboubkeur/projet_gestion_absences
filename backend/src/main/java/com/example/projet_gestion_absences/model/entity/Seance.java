@@ -1,164 +1,86 @@
 package com.example.projet_gestion_absences.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "seance")
 public class Seance {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "cours_id", nullable = false)
-    private Cours cours;
-
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "professeur_id", nullable = false)
-    private Professeur professeur;
-
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "salle_id", nullable = false)
-    private Salle salle;
-
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "emploi_du_temps_id")
-    private EmploiDuTemps emploiDuTemps;
 
     private LocalDate date;
     private LocalTime heureDebut;
     private LocalTime heureFin;
 
+    public enum StatutSeance { PLANIFIEE, EFFECTUEE, ANNULEE, REPORTEE }
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "statut", nullable = false)
     private StatutSeance statut = StatutSeance.PLANIFIEE;
 
-    @OneToMany(mappedBy = "seance", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Absence> absences;
+    // —— Relations ——
 
-    // Constructors
-    public Seance() {
-        // Default constructor required by JPA
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cours_id")
+    @JsonBackReference("cours-seances")        // <— empêche cours → seances → cours…
+    private Cours cours;
 
-    public Seance(Cours cours, Professeur professeur, Salle salle, LocalDate date,
-                  LocalTime heureDebut, LocalTime heureFin) {
-        this.cours = cours;
-        this.professeur = professeur;
-        this.salle = salle;
-        this.date = date;
-        this.heureDebut = heureDebut;
-        this.heureFin = heureFin;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "professeur_id")
+    @JsonBackReference("prof-seances")         // <— empêche prof → seances → prof…
+    private Professeur professeur;
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "salle_id")
+    @JsonBackReference(value = "salle-seances") // <— si Salle possède une liste de seances
+    private Salle salle;
 
-    public Cours getCours() {
-        return cours;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "edt_id")
+    @JsonBackReference("edt-seances")          // <— empêche edt → seances → edt…
+    private EmploiDuTemps emploiDuTemps;
 
-    public void setCours(Cours cours) {
-        this.cours = cours;
-    }
+    @OneToMany(mappedBy = "seance", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Absence> absences = new ArrayList<>();
 
-    public Professeur getProfesseur() {
-        return professeur;
-    }
+    public Seance() {}
 
-    public void setProfesseur(Professeur professeur) {
-        this.professeur = professeur;
-    }
+    // Getters / Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Salle getSalle() {
-        return salle;
-    }
+    public LocalDate getDate() { return date; }
+    public void setDate(LocalDate date) { this.date = date; }
 
-    public void setSalle(Salle salle) {
-        this.salle = salle;
-    }
+    public LocalTime getHeureDebut() { return heureDebut; }
+    public void setHeureDebut(LocalTime heureDebut) { this.heureDebut = heureDebut; }
 
-    public EmploiDuTemps getEmploiDuTemps() {
-        return emploiDuTemps;
-    }
+    public LocalTime getHeureFin() { return heureFin; }
+    public void setHeureFin(LocalTime heureFin) { this.heureFin = heureFin; }
 
-    public void setEmploiDuTemps(EmploiDuTemps emploiDuTemps) {
-        this.emploiDuTemps = emploiDuTemps;
-    }
+    public StatutSeance getStatut() { return statut; }
+    public void setStatut(StatutSeance statut) { this.statut = statut; }
 
-    public LocalDate getDate() {
-        return date;
-    }
+    public Cours getCours() { return cours; }
+    public void setCours(Cours cours) { this.cours = cours; }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
+    public Professeur getProfesseur() { return professeur; }
+    public void setProfesseur(Professeur professeur) { this.professeur = professeur; }
 
-    public LocalTime getHeureDebut() {
-        return heureDebut;
-    }
+    public Salle getSalle() { return salle; }
+    public void setSalle(Salle salle) { this.salle = salle; }
 
-    public void setHeureDebut(LocalTime heureDebut) {
-        this.heureDebut = heureDebut;
-    }
+    public EmploiDuTemps getEmploiDuTemps() { return emploiDuTemps; }
+    public void setEmploiDuTemps(EmploiDuTemps emploiDuTemps) { this.emploiDuTemps = emploiDuTemps; }
 
-    public LocalTime getHeureFin() {
-        return heureFin;
-    }
-
-    public void setHeureFin(LocalTime heureFin) {
-        this.heureFin = heureFin;
-    }
-
-    public StatutSeance getStatut() {
-        return statut;
-    }
-
-    public void setStatut(StatutSeance statut) {
-        this.statut = statut;
-    }
-
-    public List<Absence> getAbsences() {
-        return absences;
-    }
-
-    public void setAbsences(List<Absence> absences) {
-        this.absences = absences;
-    }
-
-    // Enum for session status
-    public enum StatutSeance {
-        PLANIFIEE,
-        EFFECTUEE,
-        ANNULEE,
-        REPORTEE
-    }
-
-    // Utility methods
-    public boolean estEnConflitHoraires(Seance autreSeance) {
-        return this.date.equals(autreSeance.getDate()) &&
-                this.heureDebut.isBefore(autreSeance.getHeureFin()) &&
-                this.heureFin.isAfter(autreSeance.getHeureDebut());
-    }
-
-    @Override
-    public String toString() {
-        return "Seance{" +
-                "id=" + id +
-                ", cours=" + cours.getIntitule() +
-                ", date=" + date +
-                ", heureDebut=" + heureDebut +
-                ", heureFin=" + heureFin +
-                ", salle=" + salle.getCode() +
-                '}';
-    }
+    public List<Absence> getAbsences() { return absences; }
+    public void setAbsences(List<Absence> absences) { this.absences = absences; }
 }

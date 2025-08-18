@@ -4,6 +4,7 @@ package com.example.projet_gestion_absences.model.dto;
 
 import lombok.Data;
 
+// CoursDTO.java
 @Data
 public class CoursDTO {
     private String code;
@@ -12,4 +13,5 @@ public class CoursDTO {
     private Integer coefficient;
     private Integer volumeHoraire;
     private Long matiereId;
+    private Long classeId; // 👈 NEW
 }
