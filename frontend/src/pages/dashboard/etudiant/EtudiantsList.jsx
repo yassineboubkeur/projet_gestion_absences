@@ -1,14 +1,13 @@
 // src/pages/dashboard/EtudiantsList.jsx
 import React, { useEffect, useState } from "react";
-import {
-  getEtudiants,
-  deleteEtudiant,
-} from "../../../services/etudiantService";
+import { getEtudiants, deleteEtudiant } from "../../../services/etudiantService";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../../store/useAuthStore";
 
 export default function EtudiantsList() {
   const [etudiants, setEtudiants] = useState([]);
   const navigate = useNavigate();
+  const { token, isLoadingAuth } = useAuthStore();
 
   const fetchData = async () => {
     try {
@@ -16,13 +15,24 @@ export default function EtudiantsList() {
       setEtudiants(data);
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      if (err.message.includes("401")) {
+        alert("Session expirée. Veuillez vous reconnecter.");
+        navigate("/login");
+      } else {
+        alert(err.message);
+      }
     }
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!isLoadingAuth) {
+      if (!token) {
+        navigate("/login");
+      } else {
+        fetchData();
+      }
+    }
+  }, [token, isLoadingAuth]);
 
   const handleDelete = async (id) => {
     if (window.confirm("Supprimer cet étudiant ?")) {
@@ -35,6 +45,10 @@ export default function EtudiantsList() {
       }
     }
   };
+
+  if (isLoadingAuth) {
+    return <div>Chargement...</div>;
+  }
 
   return (
     <div className="container mt-4">

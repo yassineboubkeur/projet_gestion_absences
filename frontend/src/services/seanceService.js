@@ -1,56 +1,97 @@
 // src/services/seanceService.js
-const API_URL = "http://localhost:8080/api/seances"; // changer l'URL si besoin
+import { useAuthStore } from '../store/useAuthStore';
 
-// Create Seance
+const API_URL = "http://localhost:8080/api/seances";
+
+const getAuthHeaders = () => {
+  const token = useAuthStore.getState().token;
+  return {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+};
+
 export const createSeance = async (seanceData) => {
   const response = await fetch(`${API_URL}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify(seanceData),
   });
-  if (!response.ok) throw new Error("Failed to create seance");
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to create seance");
+  }
   return response.json();
 };
 
-// Get all Seances
 export const getAllSeances = async () => {
-  const response = await fetch(`${API_URL}`);
-  if (!response.ok) throw new Error("Failed to fetch seances");
+  const response = await fetch(`${API_URL}`, {
+    headers: getAuthHeaders()
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch seances");
+  }
   return response.json();
 };
 
-// Get Seance by ID
 export const getSeanceById = async (id) => {
-  const response = await fetch(`${API_URL}/${id}`);
-  if (!response.ok) throw new Error("Seance not found");
+  const response = await fetch(`${API_URL}/${id}`, {
+    headers: getAuthHeaders()
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Seance not found");
+  }
   return response.json();
 };
 
-// Update Seance
 export const updateSeance = async (id, seanceData) => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify(seanceData),
   });
-  if (!response.ok) throw new Error("Failed to update seance");
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to update seance");
+  }
   return response.json();
 };
 
-// Delete Seance
 export const deleteSeance = async (id) => {
-  const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-  if (!response.ok) throw new Error("Failed to delete seance");
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders()
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to delete seance");
+  }
   return true;
 };
 
-// Check schedule conflict
 export const checkScheduleConflict = async (seanceData) => {
   const response = await fetch(`${API_URL}/check-conflict`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify(seanceData),
   });
-  if (!response.ok) throw new Error("Failed to check schedule conflict");
-  return response.json(); // returns true or false
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to check schedule conflict");
+  }
+  return response.json();
+};
+
+// Optionnel: Filtrer les séances par date
+export const getSeancesByDate = async (date) => {
+  const response = await fetch(`${API_URL}/by-date?date=${date}`, {
+    headers: getAuthHeaders()
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch seances by date");
+  }
+  return response.json();
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
-import { createCours, getCoursById, updateCours } from "../../../services/coursService";
+import { createCours, getCoursById, updateCoursById } from "../../../services/coursService";
 import { getAllMatieres } from "../../../services/matiereService";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -26,7 +26,7 @@ export default function CoursForm() {
   }, []);
 
   useEffect(() => {
-    if (!id) return; // création = pas d'id
+    if (!id) return;
     getCoursById(id)
       .then(data => {
         if (!data) {
@@ -40,7 +40,7 @@ export default function CoursForm() {
           description: data.description || "",
           coefficient: data.coefficient || "",
           volumeHoraire: data.volumeHoraire || "",
-          matiereId: data.matiere?.id || ""
+          matiereId: data.matiereId || ""
         });
       })
       .catch(() => {
@@ -49,13 +49,20 @@ export default function CoursForm() {
       });
   }, [id, navigate]);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (id) await updateCours(id, form);
-      else await createCours(form);
+      const dataToSend = {
+        ...form,
+        coefficient: Number(form.coefficient),
+        volumeHoraire: Number(form.volumeHoraire),
+        matiereId: Number(form.matiereId)
+      };
+      if (id) await updateCoursById(id, dataToSend);
+      else await createCours(dataToSend);
       navigate("/dashboard/cours");
     } catch (err) {
       console.error(err);
@@ -68,25 +75,63 @@ export default function CoursForm() {
       <h2>{id ? "Modifier Cours" : "Créer Cours"}</h2>
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-2">
-          <Form.Control name="code" placeholder="Code" value={form.code} onChange={handleChange} required />
+          <Form.Control
+            name="code"
+            placeholder="Code"
+            value={form.code}
+            onChange={handleChange}
+            required
+          />
         </Form.Group>
         <Form.Group className="mb-2">
-          <Form.Control name="intitule" placeholder="Intitulé" value={form.intitule} onChange={handleChange} required />
+          <Form.Control
+            name="intitule"
+            placeholder="Intitulé"
+            value={form.intitule}
+            onChange={handleChange}
+            required
+          />
         </Form.Group>
         <Form.Group className="mb-2">
-          <Form.Control name="description" placeholder="Description" value={form.description} onChange={handleChange} />
+          <Form.Control
+            name="description"
+            placeholder="Description"
+            value={form.description}
+            onChange={handleChange}
+          />
         </Form.Group>
         <Form.Group className="mb-2">
-          <Form.Control name="coefficient" type="number" placeholder="Coefficient" value={form.coefficient} onChange={handleChange} required />
+          <Form.Control
+            name="coefficient"
+            type="number"
+            placeholder="Coefficient"
+            value={form.coefficient}
+            onChange={handleChange}
+            required
+          />
         </Form.Group>
         <Form.Group className="mb-2">
-          <Form.Control name="volumeHoraire" type="number" placeholder="Volume Horaire" value={form.volumeHoraire} onChange={handleChange} required />
+          <Form.Control
+            name="volumeHoraire"
+            type="number"
+            placeholder="Volume Horaire"
+            value={form.volumeHoraire}
+            onChange={handleChange}
+            required
+          />
         </Form.Group>
         <Form.Group className="mb-2">
-          <Form.Select name="matiereId" value={form.matiereId} onChange={handleChange} required>
+          <Form.Select
+            name="matiereId"
+            value={form.matiereId}
+            onChange={handleChange}
+            required
+          >
             <option value="">-- Choisir Matière --</option>
-            {matieres.map(m => (
-              <option key={m.id} value={m.id}>{m.intitule}</option>
+            {matieres.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.intitule}
+              </option>
             ))}
           </Form.Select>
         </Form.Group>

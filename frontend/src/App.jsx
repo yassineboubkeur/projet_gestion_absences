@@ -31,6 +31,7 @@ import SeanceList from "./pages/dashboard/seance/SeanceList";
 import SeanceForm from "./pages/dashboard/seance/SeanceForm";
 import SeanceDetails from "./pages/dashboard/seance/SeanceDetails";
 import SalleDetail from "./pages/dashboard/salle/SalleDetail";
+import ParametresStatic from "./pages/dashboard/parametre/Parametres";
 
 export default function App() {
   const token = useAuthStore((state) => state.token);
@@ -76,6 +77,7 @@ export default function App() {
           <Route path="/dashboard/seances/new" element={<SeanceForm />} />
           <Route path="/dashboard/seances/:id/edit" element={<SeanceForm />} />
           <Route path="/dashboard/seances/:id" element={<SeanceDetails />} />
+          <Route path="/dashboard/parametres" element={<ParametresStatic />} />
 
         </Route>
       </Route>
