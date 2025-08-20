@@ -1,11 +1,16 @@
 package com.example.projet_gestion_absences.controller;
 
 import com.example.projet_gestion_absences.model.dto.SeanceDTO;
-import com.example.projet_gestion_absences.model.entity.Seance;
+import com.example.projet_gestion_absences.model.dto.SeanceResponseDTO;
 import com.example.projet_gestion_absences.service.SeanceService;
+import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -21,79 +26,73 @@ public class SeanceController {
 
     // Create
     @PostMapping
-    public ResponseEntity<?> createSeance(@RequestBody SeanceDTO seanceDTO) {
+    public ResponseEntity<SeanceResponseDTO> createSeance(@Valid @RequestBody SeanceDTO seanceDTO) {
         if (seanceService.hasScheduleConflict(seanceDTO)) {
-            return ResponseEntity.badRequest().body("Schedule conflict detected");
+            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409
         }
-        Seance createdSeance = seanceService.createSeance(seanceDTO);
-        return ResponseEntity.ok(createdSeance);
+        SeanceResponseDTO created = seanceService.createSeance(seanceDTO);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create("/api/seances/" + created.id()));
+        return new ResponseEntity<>(created, headers, HttpStatus.CREATED); // 201 + Location
     }
 
     // Read
     @GetMapping
-    public List<Seance> getAllSeances() {
-        return seanceService.getAllSeances();
+    public ResponseEntity<List<SeanceResponseDTO>> getAllSeances() {
+        return ResponseEntity.ok(seanceService.getAllSeances());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Seance> getSeanceById(@PathVariable Long id) {
-        return seanceService.getSeanceById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<SeanceResponseDTO> getSeanceById(@PathVariable Long id) {
+        return ResponseEntity.ok(seanceService.getSeanceById(id));
     }
 
     @GetMapping("/date/{date}")
-    public List<Seance> getSeancesByDate(@PathVariable LocalDate date) {
-        return seanceService.getSeancesByDate(date);
+    public ResponseEntity<List<SeanceResponseDTO>> getSeancesByDate(
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return ResponseEntity.ok(seanceService.getSeancesByDate(date));
     }
 
     @GetMapping("/professeur/{professeurId}")
-    public List<Seance> getSeancesByProfesseur(@PathVariable Long professeurId) {
-        return seanceService.getSeancesByProfesseur(professeurId);
+    public ResponseEntity<List<SeanceResponseDTO>> getSeancesByProfesseur(@PathVariable Long professeurId) {
+        return ResponseEntity.ok(seanceService.getSeancesByProfesseur(professeurId));
     }
 
     @GetMapping("/cours/{coursId}")
-    public List<Seance> getSeancesByCours(@PathVariable Long coursId) {
-        return seanceService.getSeancesByCours(coursId);
+    public ResponseEntity<List<SeanceResponseDTO>> getSeancesByCours(@PathVariable Long coursId) {
+        return ResponseEntity.ok(seanceService.getSeancesByCours(coursId));
     }
 
     @GetMapping("/salle/{salleId}")
-    public List<Seance> getSeancesBySalle(@PathVariable Long salleId) {
-        return seanceService.getSeancesBySalle(salleId);
+    public ResponseEntity<List<SeanceResponseDTO>> getSeancesBySalle(@PathVariable Long salleId) {
+        return ResponseEntity.ok(seanceService.getSeancesBySalle(salleId));
     }
 
     // Update
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateSeance(@PathVariable Long id, @RequestBody SeanceDTO seanceDTO) {
-        if (seanceDTO.getDate() != null && seanceDTO.getSalleId() != null &&
-                seanceDTO.getHeureDebut() != null && seanceDTO.getHeureFin() != null) {
-            if (seanceService.hasScheduleConflict(seanceDTO)) {
-                return ResponseEntity.badRequest().body("Schedule conflict detected");
-            }
+    public ResponseEntity<SeanceResponseDTO> updateSeance(@PathVariable Long id,
+                                                          @Valid @RequestBody SeanceDTO seanceDTO) {
+        // On ne bloque que si on a de quoi vérifier un vrai chevauchement
+        if (seanceDTO.getDate() != null &&
+                seanceDTO.getSalleId() != null &&
+                seanceDTO.getHeureDebut() != null &&
+                seanceDTO.getHeureFin() != null &&
+                seanceService.hasScheduleConflict(seanceDTO)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409
         }
-        try {
-            Seance updatedSeance = seanceService.updateSeance(id, seanceDTO);
-            return ResponseEntity.ok(updatedSeance);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(seanceService.updateSeance(id, seanceDTO));
     }
 
     // Delete
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSeance(@PathVariable Long id) {
-        try {
-            seanceService.deleteSeance(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        seanceService.deleteSeance(id);
+        return ResponseEntity.noContent().build(); // 204
     }
 
     // Check schedule conflict
     @PostMapping("/check-conflict")
-    public ResponseEntity<Boolean> checkScheduleConflict(@RequestBody SeanceDTO seanceDTO) {
-        boolean hasConflict = seanceService.hasScheduleConflict(seanceDTO);
-        return ResponseEntity.ok(hasConflict);
+    public ResponseEntity<Boolean> checkScheduleConflict(@Valid @RequestBody SeanceDTO seanceDTO) {
+        return ResponseEntity.ok(seanceService.hasScheduleConflict(seanceDTO));
     }
 }

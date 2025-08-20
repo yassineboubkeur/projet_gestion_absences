@@ -1,14 +1,16 @@
 package com.example.projet_gestion_absences.service;
 
+import com.example.projet_gestion_absences.model.dto.SeanceDTO;
+import com.example.projet_gestion_absences.model.dto.SeanceResponseDTO;
 import com.example.projet_gestion_absences.model.entity.*;
 import com.example.projet_gestion_absences.repository.*;
+import com.example.projet_gestion_absences.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,111 +31,155 @@ public class SeanceService {
         this.salleRepository = salleRepository;
     }
 
-    // Create
-    public Seance createSeance(com.example.projet_gestion_absences.model.dto.SeanceDTO seanceDTO) {
-        Cours cours = coursRepository.findById(seanceDTO.getCoursId())
-                .orElseThrow(() -> new RuntimeException("Cours not found"));
-        Professeur professeur = professeurRepository.findById(seanceDTO.getProfesseurId())
-                .orElseThrow(() -> new RuntimeException("Professeur not found"));
-        Salle salle = salleRepository.findById(seanceDTO.getSalleId())
-                .orElseThrow(() -> new RuntimeException("Salle not found"));
+    /* ----------------------- Helpers ----------------------- */
 
+    private SeanceResponseDTO map(Seance s) {
+        return new SeanceResponseDTO(
+                s.getId(),
+                s.getDate(),
+                s.getHeureDebut(),
+                s.getHeureFin(),
+                s.getStatut() != null ? s.getStatut().name() : null,
+                s.getCours() != null ? s.getCours().getId() : null,
+                s.getProfesseur() != null ? s.getProfesseur().getId() : null,
+                s.getSalle() != null ? s.getSalle().getId() : null,
+                s.getEmploiDuTemps() != null ? s.getEmploiDuTemps().getId() : null
+        );
+    }
+
+    private Seance buildFromDto(SeanceDTO dto, Seance target) {
+        if (dto.getCoursId() != null) {
+            Cours cours = coursRepository.findById(dto.getCoursId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Cours introuvable id=" + dto.getCoursId()));
+            target.setCours(cours);
+        }
+        if (dto.getProfesseurId() != null) {
+            Professeur professeur = professeurRepository.findById(dto.getProfesseurId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Professeur introuvable id=" + dto.getProfesseurId()));
+            target.setProfesseur(professeur);
+        }
+        if (dto.getSalleId() != null) {
+            Salle salle = salleRepository.findById(dto.getSalleId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Salle introuvable id=" + dto.getSalleId()));
+            target.setSalle(salle);
+        }
+        if (dto.getDate() != null)        target.setDate(dto.getDate());
+        if (dto.getHeureDebut() != null)  target.setHeureDebut(dto.getHeureDebut());
+        if (dto.getHeureFin() != null)    target.setHeureFin(dto.getHeureFin());
+        if (dto.getStatut() != null)      target.setStatut(dto.getStatut());
+        if (target.getStatut() == null)   target.setStatut(Seance.StatutSeance.PLANIFIEE); // défaut
+
+        return target;
+    }
+
+    /* ----------------------- Create ----------------------- */
+
+    public SeanceResponseDTO createSeance(SeanceDTO seanceDTO) {
         Seance seance = new Seance();
-        seance.setCours(cours);
-        seance.setProfesseur(professeur);
-        seance.setSalle(salle);
-        seance.setDate(seanceDTO.getDate());
-        seance.setHeureDebut(seanceDTO.getHeureDebut());
-        seance.setHeureFin(seanceDTO.getHeureFin());
-        seance.setStatut(seanceDTO.getStatut());
+        buildFromDto(seanceDTO, seance);
 
-        return seanceRepository.save(seance);
+        // (optionnel) Ici tu peux valider les conflits avant save si tu veux empêcher la création
+        // if (hasScheduleConflict(seanceDTO)) { throw new IllegalStateException("Conflit d'horaire"); }
+
+        Seance saved = seanceRepository.save(seance);
+        return map(saved);
     }
 
-    // Read
-    public List<Seance> getAllSeances() {
-        return seanceRepository.findAll();
+    /* ----------------------- Read ----------------------- */
+
+    public List<SeanceResponseDTO> getAllSeances() {
+        return seanceRepository.findAll().stream().map(this::map).toList();
     }
 
-    public Optional<Seance> getSeanceById(Long id) {
-        return seanceRepository.findById(id);
+    public SeanceResponseDTO getSeanceById(Long id) {
+        Seance s = seanceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Séance introuvable id=" + id));
+        return map(s);
     }
 
-    public List<Seance> getSeancesByDate(LocalDate date) {
-        return seanceRepository.findByDate(date);
+    public List<SeanceResponseDTO> getSeancesByDate(LocalDate date) {
+        return seanceRepository.findByDate(date).stream().map(this::map).toList();
     }
 
-    public List<Seance> getSeancesByProfesseur(Long professeurId) {
-        return seanceRepository.findByProfesseurId(professeurId);
+    public List<SeanceResponseDTO> getSeancesByProfesseur(Long professeurId) {
+        return seanceRepository.findByProfesseurId(professeurId).stream().map(this::map).toList();
     }
 
-    public List<Seance> getSeancesByCours(Long coursId) {
-        return seanceRepository.findByCoursId(coursId);
+    public List<SeanceResponseDTO> getSeancesByCours(Long coursId) {
+        return seanceRepository.findByCoursId(coursId).stream().map(this::map).toList();
     }
 
-    public List<Seance> getSeancesBySalle(Long salleId) {
-        return seanceRepository.findBySalleId(salleId);
+    public List<SeanceResponseDTO> getSeancesBySalle(Long salleId) {
+        return seanceRepository.findBySalleId(salleId).stream().map(this::map).toList();
     }
 
-    // Update
-    public Seance updateSeance(Long id, com.example.projet_gestion_absences.model.dto.SeanceDTO seanceDTO) {
+    /* ----------------------- Update ----------------------- */
+
+    public SeanceResponseDTO updateSeance(Long id, SeanceDTO seanceDTO) {
         Seance seance = seanceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Seance not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Séance introuvable id=" + id));
 
-        if (seanceDTO.getCoursId() != null) {
-            Cours cours = coursRepository.findById(seanceDTO.getCoursId())
-                    .orElseThrow(() -> new RuntimeException("Cours not found"));
-            seance.setCours(cours);
-        }
+        buildFromDto(seanceDTO, seance);
 
-        if (seanceDTO.getProfesseurId() != null) {
-            Professeur professeur = professeurRepository.findById(seanceDTO.getProfesseurId())
-                    .orElseThrow(() -> new RuntimeException("Professeur not found"));
-            seance.setProfesseur(professeur);
-        }
+        // (optionnel) revalider conflit après modif
+        // if (hasScheduleConflict(seanceDTO)) { throw new IllegalStateException("Conflit d'horaire"); }
 
-        if (seanceDTO.getSalleId() != null) {
-            Salle salle = salleRepository.findById(seanceDTO.getSalleId())
-                    .orElseThrow(() -> new RuntimeException("Salle not found"));
-            seance.setSalle(salle);
-        }
-
-        if (seanceDTO.getDate() != null) {
-            seance.setDate(seanceDTO.getDate());
-        }
-
-        if (seanceDTO.getHeureDebut() != null) {
-            seance.setHeureDebut(seanceDTO.getHeureDebut());
-        }
-
-        if (seanceDTO.getHeureFin() != null) {
-            seance.setHeureFin(seanceDTO.getHeureFin());
-        }
-
-        if (seanceDTO.getStatut() != null) {
-            seance.setStatut(seanceDTO.getStatut());
-        }
-
-        return seanceRepository.save(seance);
+        Seance saved = seanceRepository.save(seance);
+        return map(saved);
     }
 
-    // Delete
+    /* ----------------------- Delete ----------------------- */
+
     public void deleteSeance(Long id) {
         Seance seance = seanceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Seance not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Séance introuvable id=" + id));
         seanceRepository.delete(seance);
     }
 
-    // Check for schedule conflicts
-    public boolean hasScheduleConflict(com.example.projet_gestion_absences.model.dto.SeanceDTO seanceDTO) {
+    /* ----------------- Check for schedule conflicts ----------------- */
+
+    public boolean hasScheduleConflict(SeanceDTO seanceDTO) {
+        // Conflit salle (chevauchement même salle / même date)
         List<Seance> existingSeances = seanceRepository.findByDateAndSalleId(
                 seanceDTO.getDate(), seanceDTO.getSalleId());
 
         LocalTime newStart = seanceDTO.getHeureDebut();
-        LocalTime newEnd = seanceDTO.getHeureFin();
+        LocalTime newEnd   = seanceDTO.getHeureFin();
 
-        return existingSeances.stream().anyMatch(existing ->
+        boolean salleOverlap = existingSeances.stream().anyMatch(existing ->
                 existing.getHeureDebut().isBefore(newEnd) &&
-                        existing.getHeureFin().isAfter(newStart));
+                        existing.getHeureFin().isAfter(newStart)
+        );
+
+        if (salleOverlap) return true;
+
+        // Conflit professeur
+        if (seanceDTO.getProfesseurId() != null) {
+            Professeur prof = professeurRepository.findById(seanceDTO.getProfesseurId())
+                    .orElse(null);
+            if (prof != null) {
+                boolean profOverlap = !seanceRepository
+                        .findByProfesseurAndDateAndHeureDebutLessThanAndHeureFinGreaterThan(
+                                prof, seanceDTO.getDate(), newEnd, newStart
+                        ).isEmpty();
+                if (profOverlap) return true;
+            }
+        }
+
+        // Conflit classe (via le cours -> classe)
+        if (seanceDTO.getCoursId() != null) {
+            Cours cours = coursRepository.findById(seanceDTO.getCoursId()).orElse(null);
+            if (cours != null && cours.getClasse() != null) {
+                boolean classeOverlap = seanceRepository.classeHasOverlap(
+                        cours.getClasse().getId(),
+                        seanceDTO.getDate(),
+                        newStart,
+                        newEnd
+                );
+                if (classeOverlap) return true;
+            }
+        }
+
+        return false;
     }
 }
