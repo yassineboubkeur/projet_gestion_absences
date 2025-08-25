@@ -1,9 +1,11 @@
 package com.example.projet_gestion_absences.model.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+//import javax.validation.constraints.NotBlank;
+//import javax.validation.constraints.Size;
 
 @Data
 public class MatiereDTO {
