@@ -15,7 +15,7 @@ export default function Navbar() {
 
   return (
     <nav style={navStyle}>
-      <div style={logoStyle}>Mon Projet</div>
+      <div style={logoStyle}>Gestion emploi du temps</div>
       <ul style={navListStyle}>
         <li>
           <NavLink to="/" style={linkStyle} end>

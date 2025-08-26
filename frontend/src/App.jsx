@@ -32,6 +32,9 @@ import SeanceForm from "./pages/dashboard/seance/SeanceForm";
 import SeanceDetails from "./pages/dashboard/seance/SeanceDetails";
 import SalleDetail from "./pages/dashboard/salle/SalleDetail";
 import ParametresStatic from "./pages/dashboard/parametre/Parametres";
+import EmploiDuTempsList from "./pages/dashboard/emploi-du-temps/EmploiDuTempsList";
+import EmploiDuTempsForm from "./pages/dashboard/emploi-du-temps/EmploiDuTempsForm";
+import EmploiDuTempsDetail from "./pages/dashboard/emploi-du-temps/EmploiDuTempsDetail";
 
 export default function App() {
   const token = useAuthStore((state) => state.token);
@@ -78,6 +81,10 @@ export default function App() {
           <Route path="/dashboard/seances/:id/edit" element={<SeanceForm />} />
           <Route path="/dashboard/seances/:id" element={<SeanceDetails />} />
           <Route path="/dashboard/parametres" element={<ParametresStatic />} />
+          <Route path="/dashboard/emploi-du-temps" element={<EmploiDuTempsList />} />
+          <Route path="/dashboard/emploi-du-temps/new" element={<EmploiDuTempsForm />} />
+          <Route path="/dashboard/emploi-du-temps/:id/edit" element={<EmploiDuTempsForm />} />
+          <Route path="/dashboard/emploi-du-temps/:id" element={<EmploiDuTempsDetail />} />
 
         </Route>
       </Route>
