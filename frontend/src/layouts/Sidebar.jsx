@@ -25,7 +25,7 @@ export default function Sidebar() {
     { name: "Filieres", path: "/dashboard/filieres", icon: <FaChalkboardTeacher /> },
     { name: "Cours", path: "/dashboard/cours", icon: <FaBook /> },
     { name: "Matieres", path: "/dashboard/matieres", icon: <FaBook /> },
-    { name: "Emplois-temps", path: "/dashboard/emplois-temps", icon: <FaCalendarAlt /> },
+    { name: "Emplois-temps", path: "/dashboard/emploi-du-temps", icon: <FaCalendarAlt /> },
     { name: "Salles", path: "/dashboard/salles", icon: <FaDoorOpen /> },
     { name: "Seances", path: "/dashboard/seances", icon: <FaClock /> },
     { name: "Professeurs", path: "/dashboard/professeurs", icon: <FaUserTie /> },
