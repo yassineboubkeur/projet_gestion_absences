@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -27,4 +28,8 @@ public interface SalleRepository extends JpaRepository<Salle,Long> {
 
     // Optional: Find by capacity greater than or equal to required
     List<Salle> findByCapaciteGreaterThanEqual(int capacite);
+
+    List<Salle> findByIdNotIn(Collection<Long> ids);
+    List<com.example.projet_gestion_absences.model.entity.Salle> findByIdNotIn(List<Long> ids);
+
 }

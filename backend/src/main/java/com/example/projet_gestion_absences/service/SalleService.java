@@ -2,56 +2,66 @@ package com.example.projet_gestion_absences.service;
 
 import com.example.projet_gestion_absences.model.entity.Salle;
 import com.example.projet_gestion_absences.repository.SalleRepository;
+import com.example.projet_gestion_absences.repository.SeanceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class SalleService {
 
     private final SalleRepository salleRepository;
+    private final SeanceRepository seanceRepository;
 
-    public SalleService(SalleRepository salleRepository) {
+    public SalleService(SalleRepository salleRepository,
+                        SeanceRepository seanceRepository) {
         this.salleRepository = salleRepository;
+        this.seanceRepository = seanceRepository;
     }
 
     // Create
-    public Salle createSalle(Salle salleDTO) {
+    public Salle createSalle(Salle req) {
         Salle salle = new Salle();
-        salle.setCode(salleDTO.getCode());
-        salle.setBatiment(salleDTO.getBatiment());
-        salle.setNumero(salleDTO.getNumero());
-        salle.setCapacite(salleDTO.getCapacite());
-        salle.setType(salleDTO.getType());
+        salle.setCode(req.getCode());
+        salle.setBatiment(req.getBatiment());
+        salle.setNumero(req.getNumero());
+        salle.setCapacite(req.getCapacite());
+        salle.setType(req.getType());
         return salleRepository.save(salle);
     }
 
     // Read
+    @Transactional(readOnly = true)
     public List<Salle> getAllSalles() {
         return salleRepository.findAll();
     }
 
-    public Optional<Salle> getSalleById(Long id) {
-        return salleRepository.findById(id);
+    @Transactional(readOnly = true)
+    public Salle getSalleById(Long id) {
+        return salleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Salle not found with id: " + id));
     }
 
+    @Transactional(readOnly = true)
     public Salle getSalleByCode(String code) {
         return salleRepository.findByCode(code);
     }
 
     // Update
-    public Salle updateSalle(Long id, Salle salleDTO) {
+    public Salle updateSalle(Long id, Salle req) {
         Salle salle = salleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Salle not found with id: " + id));
 
-        salle.setCode(salleDTO.getCode());
-        salle.setBatiment(salleDTO.getBatiment());
-        salle.setNumero(salleDTO.getNumero());
-        salle.setCapacite(salleDTO.getCapacite());
-        salle.setType(salleDTO.getType());
+        salle.setCode(req.getCode());
+        salle.setBatiment(req.getBatiment());
+        salle.setNumero(req.getNumero());
+        salle.setCapacite(req.getCapacite());
+        salle.setType(req.getType());
 
         return salleRepository.save(salle);
     }
@@ -61,5 +71,26 @@ public class SalleService {
         Salle salle = salleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Salle not found with id: " + id));
         salleRepository.delete(salle);
+    }
+
+    // -------- DISPONIBILITÉ (utilisé par /api/salles/available) --------
+    /**
+     * Renvoie les salles disponibles pour un créneau (date/start/end).
+     * Règle de chevauchement: (start < s.heureFin) && (end > s.heureDebut)
+     */
+    @Transactional(readOnly = true)
+    public List<Salle> getAvailable(LocalDate date, LocalTime start, LocalTime end) {
+        // IDs de salles occupées sur ce créneau (requête dans SeanceRepository)
+        List<Long> busyIds = seanceRepository.findBusySalleIds(date, start, end);
+
+        // Si aucun n'est occupé → toutes les salles sont dispo
+        if (busyIds == null || busyIds.isEmpty()) {
+            return salleRepository.findAll();
+        }
+
+        // Si tous sont occupés → liste vide
+        // (évite NOT IN () et gère le cas où busyIds = ALL)
+        List<Salle> free = salleRepository.findByIdNotIn(busyIds);
+        return free != null ? free : Collections.emptyList();
     }
 }

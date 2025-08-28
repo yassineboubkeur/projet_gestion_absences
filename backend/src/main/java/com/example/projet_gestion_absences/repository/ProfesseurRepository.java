@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +30,10 @@ public interface ProfesseurRepository extends JpaRepository<Professeur, Long> {
     List<Professeur> findBySpecialiteContainingIgnoreCase(@Param("keyword") String keyword);
 
     List<Professeur> findByDateNaissanceBetween(LocalDate startDate, LocalDate endDate);
+    List<Professeur> findByIdNotIn(Collection<Long> ids);
+    List<Professeur> findByIdNotIn(List<Long> ids);
+
+
+
+
 }

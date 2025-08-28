@@ -4,9 +4,13 @@ import com.example.projet_gestion_absences.model.dto.ProfesseurDTO;
 import com.example.projet_gestion_absences.model.dto.ProfesseurResponseDTO;
 import com.example.projet_gestion_absences.model.dto.SpecialiteWithProfesseursDTO;
 import com.example.projet_gestion_absences.service.ProfesseurService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -93,5 +97,16 @@ public class ProfesseurController {
             @PathVariable String specialite) {
         List<ProfesseurResponseDTO> professeurs = professeurService.getProfesseursBySpecialite(specialite);
         return ResponseEntity.ok(professeurs);
+    }
+
+    @GetMapping("/available")
+    @SecurityRequirement(name = "bearerAuth")
+// @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSEUR','ROLE_ETUDIANT')") // selon besoin
+    public List<ProfesseurResponseDTO> getAvailableProfesseurs(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam("start") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime start,
+            @RequestParam("end")   @DateTimeFormat(pattern = "HH:mm:ss") LocalTime end
+    ) {
+        return professeurService.getAvailable(date, start, end);
     }
 }

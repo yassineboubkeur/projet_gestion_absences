@@ -2,9 +2,13 @@ package com.example.projet_gestion_absences.controller;
 
 import com.example.projet_gestion_absences.model.entity.Salle;
 import com.example.projet_gestion_absences.service.SalleService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -31,9 +35,13 @@ public class SalleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Salle> getSalleById(@PathVariable Long id) {
-        return salleService.getSalleById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            // le service renvoie Salle (pas Optional) et lève une RuntimeException si non trouvé
+            Salle salle = salleService.getSalleById(id);
+            return ResponseEntity.ok(salle);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/code/{code}")
@@ -66,5 +74,16 @@ public class SalleController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    // Disponibilités
+    @GetMapping("/available")
+    @SecurityRequirement(name = "bearerAuth")
+    public List<Salle> getAvailableSalles(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam("start") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime start,
+            @RequestParam("end")   @DateTimeFormat(pattern = "HH:mm:ss") LocalTime end
+    ) {
+        return salleService.getAvailable(date, start, end); // renvoie List<Salle>
     }
 }
