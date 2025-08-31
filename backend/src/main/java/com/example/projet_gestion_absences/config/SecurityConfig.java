@@ -21,7 +21,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true) // ← IMPORTANT: Active @PreAuthorize
+@EnableMethodSecurity(prePostEnabled = true) // Active @PreAuthorize
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -37,11 +37,25 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // CORS preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // Auth & docs publics
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/v3/api-docs/**","/swagger-ui/**","/swagger-ui.html").permitAll()
+
+                        // >>> FICHIERS STATIQUES (background uploadés)
+                        .requestMatchers("/uploads/**").permitAll()
+
+                        // >>> SETTINGS BACKGROUND
+                        .requestMatchers(HttpMethod.GET, "/api/settings/background").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/settings/background").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/settings/background").hasRole("ADMIN")
+
+                        // Zones avec rôles spécifiques (si besoin tu peux ajuster)
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/professeur/**").hasRole("PROFESSEUR")
+                        .requestMatchers("/api/professeur/**").hasRole("PROFESSEUR") // NB: ton contrôleur est /api/professeurs/** (pluriel)
+                        // Accès authentifié pour le reste
                         .requestMatchers("/api/etudiants/**", "/api/etudiant/**").authenticated()
                         .anyRequest().authenticated()
                 )
