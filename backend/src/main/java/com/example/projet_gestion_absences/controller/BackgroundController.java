@@ -1,4 +1,3 @@
-// BackgroundController.java
 package com.example.projet_gestion_absences.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -21,15 +20,15 @@ public class BackgroundController {
     @Value("${app.upload-dir:uploads}")
     private String uploadDir;
 
-    // GET public: renvoie l'URL actuelle si un fichier existe (le plus récent)
+    // ✅ GET current background (returns latest image)
     @GetMapping("/background")
     public Map<String, String> getBackground() throws IOException {
         Path dir = Paths.get(uploadDir);
         if (!Files.exists(dir)) return Map.of("url", "");
-        // On récupère le dernier .png
+
         try (var stream = Files.list(dir)) {
             String last = stream
-                    .filter(p -> !Files.isDirectory(p) && p.getFileName().toString().endsWith(".png"))
+                    .filter(p -> !Files.isDirectory(p) && p.getFileName().toString().matches("bg-.*\\.(png|jpg|jpeg|webp)$"))
                     .sorted((a, b) -> {
                         try {
                             return Files.getLastModifiedTime(b).compareTo(Files.getLastModifiedTime(a));
@@ -38,42 +37,50 @@ public class BackgroundController {
                         }
                     })
                     .map(p -> "/uploads/" + p.getFileName().toString())
-                    .findFirst().orElse("");
+                    .findFirst()
+                    .orElse("");
             return Map.of("url", last);
         }
     }
 
-    // POST admin: upload d'un PNG, retourne l'URL publique
+    // ✅ POST upload background (any image format)
     @PostMapping(value = "/background", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Map<String, String> uploadBackground(@RequestPart("file") MultipartFile file) throws IOException {
         if (file.isEmpty()) throw new IllegalArgumentException("Fichier vide");
+
         String contentType = file.getContentType();
-        if (contentType == null || !contentType.equals(MediaType.IMAGE_PNG_VALUE)) {
-            throw new IllegalArgumentException("Le fichier doit être un PNG (image/png)");
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("Le fichier doit être une image (PNG, JPG, JPEG, WEBP)");
         }
 
         Files.createDirectories(Paths.get(uploadDir));
 
-        String clean = StringUtils.cleanPath(file.getOriginalFilename());
-        String filename = "bg-" + UUID.randomUUID() + (clean.endsWith(".png") ? ".png" : ".png");
+        String ext = StringUtils.getFilenameExtension(file.getOriginalFilename());
+        if (ext == null) ext = "png";
+        String filename = "bg-" + UUID.randomUUID() + "." + ext.toLowerCase();
         Path dest = Paths.get(uploadDir).resolve(filename);
         Files.copy(file.getInputStream(), dest, StandardCopyOption.REPLACE_EXISTING);
 
         return Map.of("url", "/uploads/" + filename);
     }
 
-    // DELETE admin: (optionnel) supprimer tous les PNG uploadés
+    // ✅ DELETE all background images
     @DeleteMapping("/background")
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteBackground() throws IOException {
         Path dir = Paths.get(uploadDir);
         if (!Files.exists(dir)) return;
+
         try (var stream = Files.list(dir)) {
-            stream.filter(p -> !Files.isDirectory(p) && p.getFileName().toString().endsWith(".png"))
-                    .forEach(p -> { try { Files.deleteIfExists(p); } catch (IOException ignored) {} });
+            stream.filter(p -> !Files.isDirectory(p) && p.getFileName().toString().matches("bg-.*\\.(png|jpg|jpeg|webp)$"))
+                    .forEach(p -> {
+                        try {
+                            Files.deleteIfExists(p);
+                        } catch (IOException ignored) {}
+                    });
         }
     }
 }

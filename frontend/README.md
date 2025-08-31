@@ -1,12 +1,46 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Frontend - Gestion d'Absences (React + Vite + Tailwind)
 
-Currently, two official plugins are available:
+Frontend prêt à l'emploi pour consommer votre API Spring Boot.
+Compatible **Node 18** (Vite 5).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Installation
+```bash
+# 1) Cloner/copier ce dossier
+cd gestion-absences-frontend
 
-## Expanding the ESLint configuration
+# 2) Facultatif: définir l'URL de l'API
+cp .env.example .env
+# puis éditer VITE_API_BASE_URL si besoin
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# 3) Installer
+npm install
+
+# 4) Lancer
+npm run dev
+```
+
+## 🔐 Authentification
+- Page **/login** (login & password) → stocke le JWT.
+- Les requêtes sont effectuées avec le header `Authorization: Bearer <token>`.
+
+## 📚 Entités gérées (CRUD)
+- Étudiants `/api/etudiants`
+- Professeurs `/api/professeurs`
+- Classes `/api/classes`
+- Matières `/api/matieres`
+- Salles `/api/salles`
+- Cours `/api/cours`
+- Séances `/api/seances` (+ check-conflit)
+
+## 🗓 Emploi du temps
+- **Voir le dernier**: `GET /api/emploi-du-temps/by-classe/{classeId}/latest`
+- **Générer 16 séances**: `GET /api/emploi-du-temps/generate-weekly-16?classeId=ID&weekStart=YYYY-MM-DD`
+
+## 🧩 Configuration
+- Tout est centralisé dans `src/config/entities.js` (colonnes du tableau, champs du formulaire, endpoints, mapping du payload).
+
+## 🧠 Notes
+- Ce frontend suppose les endpoints REST fournis par ton backend.
+- Tu peux facilement ajouter une nouvelle entité en éditant `entities.js`.
+- Les champs `select` récupèrent leurs options via les endpoints configurés.
