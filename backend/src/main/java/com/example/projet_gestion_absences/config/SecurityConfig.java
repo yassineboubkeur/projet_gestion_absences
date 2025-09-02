@@ -57,6 +57,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/professeur/**").hasRole("PROFESSEUR") // NB: ton contrôleur est /api/professeurs/** (pluriel)
                         // Accès authentifié pour le reste
                         .requestMatchers("/api/etudiants/**", "/api/etudiant/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/seances/*/absences/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/seances/*/absences/**").hasAnyRole("ADMIN","PROFESSEUR")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -14,4 +14,6 @@ import java.util.Optional;
 public interface EmploiDuTempsRepository extends JpaRepository<EmploiDuTemps, Long> {
     List<EmploiDuTemps> findByClasseId(Long classeId);
     Optional<EmploiDuTemps> findTopByClasseIdOrderByDateDebutDesc(Long classeId);
+    Optional<EmploiDuTemps> findFirstByClasseIdOrderByDateDebutDesc(Long classeId);
+
 }
