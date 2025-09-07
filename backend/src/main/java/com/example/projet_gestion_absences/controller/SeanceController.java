@@ -25,6 +25,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/seances")
+@PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
+
 public class SeanceController {
 
     private final SeanceService seanceService;

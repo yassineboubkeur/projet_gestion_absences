@@ -5,6 +5,7 @@ import com.example.projet_gestion_absences.service.SalleService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -13,6 +14,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/salles")
+@PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
+
 public class SalleController {
 
     private final SalleService salleService;

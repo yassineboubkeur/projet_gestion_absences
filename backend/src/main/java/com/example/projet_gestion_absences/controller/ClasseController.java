@@ -5,12 +5,15 @@ import com.example.projet_gestion_absences.model.dto.ClasseResponseDTO;
 import com.example.projet_gestion_absences.model.dto.EtudiantResponseDTO;
 import com.example.projet_gestion_absences.service.ClasseService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/classes")
+//@PreAuthorize("hasRole('ROLE_ADMIN')")
+
 public class ClasseController {
 
     private final ClasseService classeService;
@@ -21,6 +24,8 @@ public class ClasseController {
 
     // CREATE
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
+
     public ResponseEntity<ClasseResponseDTO> createClasse(@RequestBody ClasseDTO classeDTO) {
         ClasseResponseDTO createdClasse = classeService.createClasse(classeDTO);
         return ResponseEntity.ok(createdClasse);
@@ -42,6 +47,8 @@ public class ClasseController {
 
     // UPDATE
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
+
     public ResponseEntity<ClasseResponseDTO> updateClasse(
             @PathVariable Long id,
             @RequestBody ClasseDTO classeDTO) {
@@ -52,6 +59,8 @@ public class ClasseController {
 
     // DELETE
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
+
     public ResponseEntity<Void> deleteClasse(@PathVariable Long id) {
         classeService.deleteClasse(id);
         return ResponseEntity.noContent().build();
@@ -59,12 +68,16 @@ public class ClasseController {
 
     // SPECIAL ENDPOINTS
     @GetMapping("/{id}/etudiants")
+    @PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
+
     public ResponseEntity<List<EtudiantResponseDTO>> getEtudiantsByClasse(@PathVariable Long id) {
         List<EtudiantResponseDTO> etudiants = classeService.getEtudiantsByClasse(id);
         return ResponseEntity.ok(etudiants);
     }
 
     @GetMapping("/niveau/{niveau}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
+
     public List<ClasseResponseDTO> getClassesByNiveau(@PathVariable String niveau) {
         return classeService.getClassesByNiveau(niveau);
     }

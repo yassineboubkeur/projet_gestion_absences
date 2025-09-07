@@ -4,6 +4,7 @@ import com.example.projet_gestion_absences.model.dto.MatiereDTO;
 import com.example.projet_gestion_absences.model.entity.Matiere;
 import com.example.projet_gestion_absences.service.MatiereService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -11,6 +12,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/matieres")
+@PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
+
 public class MatiereController {
 
     private final MatiereService matiereService;

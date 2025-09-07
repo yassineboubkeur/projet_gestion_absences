@@ -36,7 +36,7 @@ public class EmploiDuTempsController {
 
     // CREATE - Créer un nouvel emploi du temps manuellement
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
     public ResponseEntity<EmploiDuTempsResponseDTO> createEmploiDuTemps(
             @RequestParam String intitule,
             @RequestParam Long classeId,
@@ -50,7 +50,7 @@ public class EmploiDuTempsController {
 
     // ADD - Ajouter une séance à un emploi du temps existant
     @PostMapping("/{edtId}/seances")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
     public ResponseEntity<EmploiDuTempsResponseDTO> addSeanceToEdt(
             @PathVariable Long edtId,
             @RequestBody SeanceDTO seanceDTO) {
@@ -61,6 +61,8 @@ public class EmploiDuTempsController {
 
     // GET ALL - Récupérer tous les emplois du temps
     @GetMapping
+//    @PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
+
     public List<EmploiDuTempsResponseDTO> getAllEmploiDuTemps() {
         return emploiDuTempsRepository.findAll().stream()
                 .map(this::mapEdtToDto)

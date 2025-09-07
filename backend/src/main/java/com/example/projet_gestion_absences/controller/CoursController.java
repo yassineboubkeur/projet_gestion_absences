@@ -4,12 +4,15 @@ import com.example.projet_gestion_absences.model.dto.CoursDTO;
 import com.example.projet_gestion_absences.model.entity.Cours;
 import com.example.projet_gestion_absences.service.CoursService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/cours")
+@PreAuthorize("hasAnyRole('ADMIN','PROFESSEUR')")
+
 public class CoursController {
 
     private final CoursService coursService;
