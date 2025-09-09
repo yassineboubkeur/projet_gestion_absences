@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(
@@ -34,7 +34,7 @@ public class Absence {
     @Column(length = 1000)
     private String motif;
 
-    private LocalDateTime dateDeclaration;
+    private LocalDate dateDeclaration;
 
     @OneToOne(mappedBy = "absence", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -42,7 +42,7 @@ public class Absence {
 
     // Constructors
     public Absence() {
-        this.dateDeclaration = LocalDateTime.now();
+        this.dateDeclaration = LocalDate.now();
         this.justifiee = false;
     }
 
@@ -74,8 +74,8 @@ public class Absence {
     public String getMotif() { return motif; }
     public void setMotif(String motif) { this.motif = motif; }
 
-    public LocalDateTime getDateDeclaration() { return dateDeclaration; }
-    public void setDateDeclaration(LocalDateTime dateDeclaration) { this.dateDeclaration = dateDeclaration; }
+    public LocalDate getDateDeclaration() { return dateDeclaration; }
+    public void setDateDeclaration(LocalDate dateDeclaration) { this.dateDeclaration = dateDeclaration; }
 
     public Justificatif getJustificatif() { return justificatif; }
     public void setJustificatif(Justificatif justificatif) {
@@ -88,7 +88,7 @@ public class Absence {
     @PrePersist
     public void onCreate() {
         if (this.dateDeclaration == null) {
-            this.dateDeclaration = LocalDateTime.now();
+            this.dateDeclaration = LocalDate.now();
         }
     }
 }
