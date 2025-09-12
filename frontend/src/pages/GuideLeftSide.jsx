@@ -183,20 +183,17 @@ export default function GuideLeftSide() {
 
   /* ====================== UI ====================== */
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-slate-800">Panneau latéral</h3>
-      <p className="mt-1 text-slate-600 text-sm">
-        Placez ici des raccourcis, KPIs, liens utiles, ou un mini tutoriel vidéo.
-      </p>
+    <div className="rounded-2xl border border-slate-200 bg-opacity-70 backdrop-blur-md bg-white p-6 shadow-sm">
+      
 
       <div className="mt-4 space-y-2 text-sm">
-        <a className="block rounded-lg border border-slate-200 px-3 py-2 hover:bg-slate-50" href="/classes">
+        <a className="block rounded-lg border bg-indigo-600 text-white hover:bg-indigo-700 border-slate-200 px-3 py-2 " href="/classes">
           Créer une classe
         </a>
-        <a className="block rounded-lg border border-slate-200 px-3 py-2 hover:bg-slate-50" href="/etudiants">
+        <a className="block rounded-lg border bg-indigo-600 text-white  hover:bg-indigo-700 border-slate-200 px-3 py-2 " href="/etudiants">
           Importer des étudiants
         </a>
-        <a className="block rounded-lg border border-slate-200 px-3 py-2 hover:bg-slate-50" href="/cours">
+        <a className="block rounded-lg border bg-indigo-600 text-white  hover:bg-indigo-700 border-slate-200 px-3 py-2 " href="/cours">
           Nouveau cours
         </a>
       </div>
@@ -204,7 +201,7 @@ export default function GuideLeftSide() {
       {isAdmin && (
         <>
           {/* ====== Background ====== */}
-          <div className="mt-6 rounded-xl border border-slate-200 p-4">
+          <div className="mt-6 rounded-xl   p-4">
             <h4 className="font-semibold text-slate-800">Background de l’application</h4>
 
             <div className="mt-3">
@@ -272,14 +269,14 @@ export default function GuideLeftSide() {
               </div>
             )}
 
-            <p className="mt-3 text-[11px] text-slate-500">
+            {/* <p className="mt-3 text-[11px] text-slate-500">
               Astuce : le layout global écoute <code>bg:updated</code> et lit{" "}
               <code className="bg-slate-100 px-1 rounded">localStorage.getItem("app:bgUrl")</code>.
-            </p>
+            </p> */}
           </div>
 
           {/* ====== Branding (Navbar) ====== */}
-          <div className="mt-6 rounded-xl border border-slate-200 p-4">
+          <div className="mt-6 rounded-xl  p-4">
             <h4 className="font-semibold text-slate-800">Branding de la barre de navigation</h4>
 
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -342,12 +339,12 @@ export default function GuideLeftSide() {
               </div>
             )}
 
-            <p className="mt-3 text-[11px] text-slate-500">
+            {/* <p className="mt-3 text-[11px] text-slate-500">
               La <code>Navbar</code> lit <code>GET /api/settings/branding</code> et/ou{" "}
               <code>localStorage</code>. Ce panneau déclenche{" "}
               <code>brand:updated</code> et met à jour{" "}
               <code>app:brandCode</code> / <code>app:brandTitle</code>.
-            </p>
+            </p> */}
           </div>
         </>
       )}

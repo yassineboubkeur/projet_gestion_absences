@@ -27,7 +27,7 @@ export default function Guide() {
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-slate-800">
-            Créer des <span className="text-indigo-700">filières</span> puis des <span className="text-indigo-700">classes</span>
+            Créer des  <span className="text-indigo-700">classes</span>
           </h3>
           <p className="mt-1 text-slate-600">
             Commencez par définir l’organisation pédagogique : créez d’abord les <strong>filières</strong>, puis les <strong>classes</strong> rattachées à chaque filière.
@@ -97,7 +97,7 @@ export default function Guide() {
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700">Menu → Professeurs → Nouvel utilisateur</span>
-            <span className="rounded-full bg-green-50 px-3 py-1 text-xs text-green-700 border border-green-200">Conseil : activez uniquement les comptes utilisés</span>
+            {/* <span className="rounded-full bg-green-50 px-3 py-1 text-xs text-green-700 border border-green-200">Conseil : activez uniquement les comptes utilisés</span> */}
           </div>
         </div>
       </li>
@@ -116,7 +116,7 @@ export default function Guide() {
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700">Menu → Salles → Nouvelle salle</span>
-            <span className="rounded-full bg-amber-50 px-3 py-1 text-xs text-amber-700 border border-amber-200">Astuce : renseignez la capacité pour éviter la sur-occupation</span>
+            {/* <span className="rounded-full bg-amber-50 px-3 py-1 text-xs text-amber-700 border border-amber-200">Astuce : renseignez la capacité pour éviter la sur-occupation</span> */}
           </div>
         </div>
       </li>
